@@ -1,0 +1,261 @@
+1. Streams filter() and collect()
+
+
+1.1 Before Java 8, filter a List like this :
+
+BeforeJava8.java
+
+package com.mkyong.java8;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class BeforeJava8 {
+
+    public static void main(String[] args) {
+
+        List<String> lines = Arrays.asList("spring", "node", "mkyong");
+        List<String> result = getFilterOutput(lines, "mkyong");
+        for (String temp : result) {
+            System.out.println(temp);    //output : spring, node
+        }
+
+    }
+
+    private static List<String> getFilterOutput(List<String> lines, String filter) {
+        List<String> result = new ArrayList<>();
+        for (String line : lines) {
+            if (!"mkyong".equals(line)) { // we dont like mkyong
+                result.add(line);
+            }
+        }
+        return result;
+    }
+
+}
+Output
+
+
+spring
+node
+1.2 The equivalent example in Java 8, stream.filter() to filter a List, and collect() to convert a stream into a List.
+
+NowJava8.java
+
+package com.mkyong.java8;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class NowJava8 {
+
+    public static void main(String[] args) {
+
+        List<String> lines = Arrays.asList("spring", "node", "mkyong");
+
+        List<String> result = lines.stream()                // convert list to stream
+                .filter(line -> !"mkyong".equals(line))     // we dont like mkyong
+                .collect(Collectors.toList());              // collect the output and convert streams to a List
+
+        result.forEach(System.out::println);                //output : spring, node
+
+    }
+
+}
+Output
+
+
+spring
+node
+
+
+2. Streams filter(), findAny() and orElse()
+Person.java
+
+package com.mkyong.java8;
+
+public class Person {
+
+    private String name;
+    private int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    //gettersm setters, toString
+}
+2.1 Before Java 8, you get a Person by name like this :
+
+BeforeJava8.java
+
+package com.mkyong.java8;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class BeforeJava8 {
+
+    public static void main(String[] args) {
+
+        List<Person> persons = Arrays.asList(
+                new Person("mkyong", 30),
+                new Person("jack", 20),
+                new Person("lawrence", 40)
+        );
+
+        Person result = getStudentByName(persons, "jack");
+        System.out.println(result);
+
+    }
+
+    private static Person getStudentByName(List<Person> persons, String name) {
+
+        Person result = null;
+        for (Person temp : persons) {
+            if (name.equals(temp.getName())) {
+                result = temp;
+            }
+        }
+        return result;
+    }
+}
+Output
+
+
+Person{name='jack', age=20}
+2.2 The equivalent example in Java 8, use stream.filter() to filter a List, and .findAny().orElse (null) to return an object conditional.
+
+NowJava8.java
+
+package com.mkyong.java8;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class NowJava8 {
+
+    public static void main(String[] args) {
+
+        List<Person> persons = Arrays.asList(
+                new Person("mkyong", 30),
+                new Person("jack", 20),
+                new Person("lawrence", 40)
+        );
+
+        Person result1 = persons.stream()                        // Convert to steam
+                .filter(x -> "jack".equals(x.getName()))        // we want "jack" only
+                .findAny()                                      // If 'findAny' then return found
+                .orElse(null);                                  // If not found, return null
+
+        System.out.println(result1);
+        
+        Person result2 = persons.stream()
+                .filter(x -> "ahmook".equals(x.getName()))
+                .findAny()
+                .orElse(null);
+
+        System.out.println(result2);
+
+    }
+
+}
+Output
+
+
+Person{name='jack', age=20}
+null
+2.3 For multiple condition.
+
+NowJava8.java
+
+package com.mkyong.java8;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class NowJava8 {
+
+    public static void main(String[] args) {
+
+        List<Person> persons = Arrays.asList(
+                new Person("mkyong", 30),
+                new Person("jack", 20),
+                new Person("lawrence", 40)
+        );
+
+        Person result1 = persons.stream()
+                .filter((p) -> "jack".equals(p.getName()) && 20 == p.getAge())
+                .findAny()
+                .orElse(null);
+
+        System.out.println("result 1 :" + result1);
+
+        //or like this
+        Person result2 = persons.stream()
+                .filter(p -> {
+                    if ("jack".equals(p.getName()) && 20 == p.getAge()) {
+                        return true;
+                    }
+                    return false;
+                }).findAny()
+                .orElse(null);
+
+        System.out.println("result 2 :" + result2);
+
+    }
+
+
+}
+Output
+
+
+result 1 :Person{name='jack', age=20}
+result 2 :Person{name='jack', age=20}
+3. Streams filter() and map()
+NowJava8.java
+
+package com.mkyong.java8;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class NowJava8 {
+
+    public static void main(String[] args) {
+
+        List<Person> persons = Arrays.asList(
+                new Person("mkyong", 30),
+                new Person("jack", 20),
+                new Person("lawrence", 40)
+        );
+
+        String name = persons.stream()
+                .filter(x -> "jack".equals(x.getName()))
+                .map(Person::getName)                        //convert stream to String
+                .findAny()
+                .orElse("");
+
+        System.out.println("name : " + name);
+
+        List<String> collect = persons.stream()
+                .map(Person::getName)
+                .collect(Collectors.toList());
+
+        collect.forEach(System.out::println);
+
+    }
+    
+}
+Output
+
+
+name : jack
+
+mkyong
+jack
+lawrence
