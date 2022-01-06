@@ -1,0 +1,97 @@
+1. Stream -> String[]
+StreamString.java
+
+package com.mkyong;
+
+import java.util.Arrays;
+
+public class StreamString {
+
+    public static void main(String[] args) {
+
+        String lines = "I Love Java 8 Stream!";
+
+        // split by space, uppercase, and convert to Array
+        String[] result = Arrays.stream(lines.split("\\s+"))
+			.map(String::toUpperCase)
+			.toArray(String[]::new);
+
+        for (String s : result) {
+            System.out.println(s);
+        }
+
+    }
+
+}
+Output
+
+
+I
+LOVE
+JAVA
+8
+STREAM!
+
+
+
+2. IntStream -> Integer[] or int[]
+2.1 Stream to Integer[]
+
+StreamInt1.java
+
+package com.mkyong;
+
+import java.util.Arrays;
+
+public class StreamInt1 {
+
+    public static void main(String[] args) {
+
+        int[] num = {1, 2, 3, 4, 5};
+
+        Integer[] result = Arrays.stream(num)
+			.map(x -> x * 2)
+			.boxed()
+			.toArray(Integer[]::new);
+
+        System.out.println(Arrays.asList(result));
+        
+    }
+
+}
+Output
+
+
+[2, 4, 6, 8, 10]
+2.2 Stream to int[]
+
+StreamInt2.java
+
+package com.mkyong;
+
+import java.util.Arrays;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+public class StreamInt2 {
+
+    public static void main(String[] args) {
+
+        // IntStream -> int[]
+        int[] stream1 = IntStream.rangeClosed(1, 5).toArray();
+        System.out.println(Arrays.toString(stream1));
+
+        // Stream<Integer> -> int[]
+        Stream<Integer> stream2 = Stream.of(1, 2, 3, 4, 5);
+        int[] result = stream2.mapToInt(x -> x).toArray();
+
+        System.out.println(Arrays.toString(result));
+
+    }
+
+}
+Output
+
+
+[1, 2, 3, 4, 5]
+[1, 2, 3, 4, 5]

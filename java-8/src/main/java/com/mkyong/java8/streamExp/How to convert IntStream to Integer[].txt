@@ -1,0 +1,39 @@
+he key is boxed() the IntStream into a Stream<Integer>, then only convert to an Array.
+
+StreamExample.java
+
+package com.mkyong;
+
+import java.util.Arrays;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+public class StreamExample {
+
+    public static void main(String[] args) {
+
+        //int[] -> IntStream -> Stream<Integer> -> Integer[]
+        int[] num = {3, 4, 5};
+
+        //1. int[] -> IntStream
+        IntStream stream = Arrays.stream(num);
+
+        //2. IntStream -> Stream<Integer>
+        Stream<Integer> boxed = stream.boxed();
+
+        //3. Stream<Integer> -> Integer[]
+        Integer[] result = boxed.toArray(Integer[]::new);
+
+        System.out.println(Arrays.toString(result));
+
+        // one line
+        Integer[] oneLineResult = Arrays.stream(num).boxed().toArray(Integer[]::new);
+        System.out.println(Arrays.toString(oneLineResult));
+    }
+
+}
+Output
+
+
+[3, 4, 5]
+[3, 4, 5]
